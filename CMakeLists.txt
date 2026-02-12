@@ -32,16 +32,22 @@ target_include_directories(test-lib PUBLIC
 # Project uses C++17
 target_compile_features(test-lib PUBLIC cxx_std_17)
 
-# Create test executable
-find_package(GTest CONFIG REQUIRED)
+include(CTest)
 
-add_executable(test-lib-tests Tests/Tests.cpp)
+if(BUILD_TESTING)
 
-target_link_libraries(test-lib-tests
-  PRIVATE test-lib
-  GTest::gtest
-  GTest::gtest_main
-)
+  # Create test executable
+  find_package(GTest CONFIG REQUIRED)
+
+  add_executable(test-lib-tests Tests/Tests.cpp)
+
+  target_link_libraries(test-lib-tests
+    PRIVATE test-lib
+    GTest::gtest
+    GTest::gtest_main
+  )
+
+endif()
 
 # Install ---------------------------------------------------------
 
