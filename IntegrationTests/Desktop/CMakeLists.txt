@@ -11,10 +11,9 @@ target_link_libraries(integration_test PRIVATE TestLib::test-lib)
 
 add_test(NAME integration_test COMMAND $<TARGET_FILE:integration_test>)
 
-# Add the dll directory to the path on Windows
 if(WIN32)
     get_target_property(_t TestLib::test-lib TYPE)
-
+    # If we're on windows and built tets-lib as shared, we need to specify the dll directory
     if(_t STREQUAL "SHARED_LIBRARY")
         if(NOT TESTLIB_INSTALL_PREFIX)
             message(FATAL_ERROR "TESTLIB_INSTALL_PREFIX must be set when testing shared TestLib on Windows")
