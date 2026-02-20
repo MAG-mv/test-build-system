@@ -67,12 +67,11 @@ install(TARGETS test-lib
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   # .a or import .lib location
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-  # Includes location
+  # Public includes location
   INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
 
-# Install public headers
-# What is this for when we have INCLUDES DESTINATION above?
+# Install include directory
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/Library/include/
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
 )
