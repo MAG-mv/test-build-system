@@ -36,7 +36,7 @@ jobs:
       id: strings
       shell: bash
       run: |
-        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+        echo "build-output-dir=${{ github.workspace }}\build" >> "$GITHUB_OUTPUT"
 
     - name: Install Conan
       uses: conan-io/setup-conan@v1
@@ -51,7 +51,7 @@ jobs:
       run: >
         cmake -B ${{ steps.strings.outputs.build-output-dir }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-        -DCMAKE_TOOLCHAIN_FILE=-DCMAKE_TOOLCHAIN_FILE="${{ steps.strings.outputs.build-output-dir }}/build/generators/conan_toolchain.cmake"
+        -DCMAKE_TOOLCHAIN_FILE=-DCMAKE_TOOLCHAIN_FILE="${{ steps.strings.outputs.build-output-dir }}\build\generators\conan_toolchain.cmake"
         -S ${{ github.workspace }}
 
     - name: Build
