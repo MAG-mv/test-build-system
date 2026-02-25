@@ -69,7 +69,7 @@ jobs:
       
     - name: Install
       shell: bash
-      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config --config ${{ matrix.build_type }} --prefix install
+      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --prefix install
 
     #- name: Test
       #working-directory: ${{ steps.strings.outputs.build-output-dir }}
