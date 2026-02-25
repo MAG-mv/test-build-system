@@ -75,7 +75,7 @@ jobs:
       
     - name: Install
       shell: bash
-      run: cmake --install --preset conan-${{ steps.strings.outputs.build-type-lower }} --prefix "${{ github.workspace }}/install"
+      run: cmake --install "${{ github.workspace }}/build/build/${{ matrix.build_type }}" --config ${{ matrix.build_type }} --prefix "${{ github.workspace }}/install"
       
     #- name: Test
       #working-directory: ${{ steps.strings.outputs.build-output-dir }}
