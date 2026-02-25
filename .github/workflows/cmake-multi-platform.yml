@@ -73,7 +73,8 @@ jobs:
           -B "${{ github.workspace }}/build"
           -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/build/build/${{ matrix.build_type }}/generators/conan_toolchain.cmake" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-          -DTestLib_DIR="${{ github.workspace }}/install/lib/cmake/TestLib"
+          -DCMAKE_FIND_DEBUG_MODE=ON \
+          -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
 
 
     - name: Build Integration Tests
