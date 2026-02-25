@@ -5,9 +5,9 @@ name: Build and test all supported platforms
 # Our event to trigger this workflow
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "master", "ga-test" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "master", "ga-test" ]
 
 # Build all supported platforms
 jobs:
