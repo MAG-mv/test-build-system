@@ -92,16 +92,16 @@ jobs:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
       fail-fast: false
       
-    matrix:
-      include:
-        - platform: ios
-          sdk: iphonesimulator
-          destination: 'platform=iOS Simulator,name=iPhone 15'
-          profile: ios_sim_arm
-        - platform: visionos
-          sdk: xrsimulator
-          destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
-          profile: visionos_sim_arm
+      matrix:
+        include:
+          - platform: ios
+            sdk: iphonesimulator
+            destination: 'platform=iOS Simulator,name=iPhone 15'
+            profile: ios_sim_arm
+          - platform: visionos
+            sdk: xrsimulator
+            destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
+            profile: visionos_sim_arm
 
     steps:
     - uses: actions/checkout@v4
