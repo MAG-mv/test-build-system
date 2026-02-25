@@ -69,8 +69,8 @@ jobs:
       
     - name: Install
       shell: bash
-      run: cmake --install ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }} --prefix install
-
+      run: cmake --install --preset conan-${{ steps.strings.outputs.build-type-lower }} --prefix "${{ github.workspace }}/install"
+      
     #- name: Test
       #working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
