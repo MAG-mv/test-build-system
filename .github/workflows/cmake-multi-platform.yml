@@ -79,7 +79,7 @@ jobs:
 
     - name: Build Integration Tests
       shell: bash
-      run: cmake --build ""${{ github.workspace }}IntegrationTests/Desktop/build" --config ${{ matrix.build_type }}
+      run: cmake --build "${{ github.workspace }}IntegrationTests/Desktop/build" --config ${{ matrix.build_type }}
 
     
     #- name: Test
