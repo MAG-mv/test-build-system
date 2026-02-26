@@ -95,7 +95,7 @@ jobs:
       matrix:
         include:
           - platform: iOS
-            simulator: iPhone 17
+            simulator: iPhone 15
             sdk: iphonesimulator
             destination: 'platform=iOS Simulator,name=iPhone 15'
             profile: ios_sim_arm
