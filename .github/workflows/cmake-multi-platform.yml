@@ -95,13 +95,11 @@ jobs:
           - platform: iOS
             simulator: iPhone 17
             sdk: iphonesimulator
-            destination: 'platform=iOS Simulator,name=iPhone 15'
             profile: ios_sim_arm
             build_type: Release
           - platform: visionOS
             simulator: Apple Vision Pro
             sdk: xrsimulator
-            destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
             profile: visionos_sim_arm
             build_type: Release
 
