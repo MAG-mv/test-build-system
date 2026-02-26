@@ -184,4 +184,4 @@ jobs:
 
     - name: Run Integration Tests
       shell: bash
-      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/${{ matrix.platform }}/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" -C ${{ matrix.build_type }} -V
