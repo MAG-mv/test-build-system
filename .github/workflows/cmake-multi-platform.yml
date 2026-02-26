@@ -182,7 +182,7 @@ jobs:
 
     - name: Build Integration Tests
       shell: bash
-      run: cmake --build "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/${{ matrix.platform }}/build/${{ matrix.build_type }}" --config ${{ matrix.build_type }}
+      run: cmake --build "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" --config ${{ matrix.build_type }}
 
     - name: Run Integration Tests
       shell: bash
