@@ -94,12 +94,14 @@ jobs:
       
       matrix:
         include:
-          - platform: ios
+          - platform: iOS
+            simulator: iPhone 17
             sdk: iphonesimulator
             destination: 'platform=iOS Simulator,name=iPhone 15'
             profile: ios_sim_arm
             build_type: Release
-          - platform: visionos
+          - platform: visionOS
+            simulator: Apple Vision Pro
             sdk: xrsimulator
             destination: 'platform=visionOS Simulator,name=Apple Vision Pro'
             profile: visionos_sim_arm
@@ -140,5 +142,22 @@ jobs:
       
     - name: Install
       shell: bash
-      run: cmake --install "${{ github.workspace }}/build/${{ matrix.platform }}/build/${{ matrix.build_type }}" --config ${{ matrix.build_type }} --prefix "${{ github.workspace }}/install"
-  
+      run: cmake --install "${{ github.workspace }}/build/${{ matrix.platform }}/build/${{ matrix.build_type }}" --config ${{ matrix.build_type }} --prefix "${{ github.workspace }}/install/${{ matrix.platform }}"
+    
+    - name: Download Simulators
+      shell: bash
+      run: xcodebuild -downloadPlatform ${{ matrix.platform }}
+
+    - name: Shutdown any simulators
+      shell: bash
+      run: xcrun simctl shutdown all
+
+    - name: Boot Simulators
+      shell: bash
+      run: xcrun simctl boot ${{ matrix.simulator }}
+
+    - name: Wait for Simulators
+      shell: bash
+      run: xcrun simctl bootstatus booted
+
+
