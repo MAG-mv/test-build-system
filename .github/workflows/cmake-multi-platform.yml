@@ -157,7 +157,7 @@ jobs:
 
     - name: Boot Simulators
       shell: bash
-      run: xcrun simctl boot ${{ matrix.simulator }}
+      run: xcrun simctl boot "${{ matrix.simulator }}"
 
     - name: Wait for Simulators
       shell: bash
