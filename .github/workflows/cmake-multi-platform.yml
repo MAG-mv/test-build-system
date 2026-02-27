@@ -147,6 +147,8 @@ jobs:
       shell: bash
       run: cmake --install "${{ github.workspace }}/build/${{ matrix.platform }}/build/${{ matrix.build_type }}" --config ${{ matrix.build_type }} --prefix "${{ github.workspace }}/install/${{ matrix.platform }}"
 
+    # Integration Tests ------------------------------------
+
     - name: Shutdown any simulators
       shell: bash
       run: xcrun simctl shutdown all
@@ -158,8 +160,6 @@ jobs:
     - name: Wait for Simulator
       shell: bash
       run: xcrun simctl bootstatus booted
-
-    # Integration Tests ------------------------------------
 
     - name: Install Integration Test Dependencies
       shell: bash
@@ -201,6 +201,8 @@ jobs:
         bt_lower=$(echo "${{ matrix.build_type }}" | tr '[:upper:]' '[:lower:]')
         echo "build-type-lower=$bt_lower" >> "$GITHUB_OUTPUT"
 
+    # Integration Tests ------------------------------------
+
     - uses: actions/setup-java@v3
       with:
         java-version: '17'
@@ -208,12 +210,9 @@ jobs:
         
     - uses: android-actions/setup-android@v3
 
-    - name: List Images
-      run: sdkmanager --list | grep -E "system-images"
+    - name: Install Emulator
+      run: sdkmanager "system-images;android-27;default;x86_64"
 
-    - name: Create Android Emulator
+    - name: Create Android Emulator 
       run: avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
-
-    - name: List Installed Android Devices
-      run: avdmanager list avd
 
