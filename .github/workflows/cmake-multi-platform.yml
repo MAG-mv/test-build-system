@@ -208,6 +208,9 @@ jobs:
         
     - uses: android-actions/setup-android@v3
 
+    - name: Create Android Emulator
+      run: avdmanager.bat create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
+
     - name: List Android Devices
       run: avdmanager list avd
 
