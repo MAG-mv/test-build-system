@@ -183,3 +183,28 @@ jobs:
     - name: Run Integration Tests
       shell: bash
       run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" -C ${{ matrix.build_type }} -V
+
+  android:
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set reusable strings
+      # Turn repeated input strings (such as the build output directory) into step outputs. These step outputs can be used throughout the workflow file.
+      id: strings
+      shell: bash
+      run: |
+        echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
+
+        # Lowercase build type once (Release -> release, Debug -> debug)
+        bt_lower=$(echo "${{ matrix.build_type }}" | tr '[:upper:]' '[:lower:]')
+        echo "build-type-lower=$bt_lower" >> "$GITHUB_OUTPUT"
+
+    - uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        
+    - uses: android-actions/setup-android@v3
+
