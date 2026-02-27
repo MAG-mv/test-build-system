@@ -208,3 +208,6 @@ jobs:
         
     - uses: android-actions/setup-android@v3
 
+    - name: List Android Devices
+      run: avdmanager list avd
+
