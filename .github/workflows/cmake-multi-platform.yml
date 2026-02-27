@@ -211,8 +211,8 @@ jobs:
     - uses: android-actions/setup-android@v3
 
     - name: Install Emulator
-      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
+      run: sdkmanager "system-images;android-27;default;x86_64"
 
     - name: Create Android Emulator 
-      run: avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
+      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
 
