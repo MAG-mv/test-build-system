@@ -149,10 +149,6 @@ jobs:
 
     # Integration Tests ------------------------------------
 
-    - name: Shutdown any simulators
-      shell: bash
-      run: xcrun simctl shutdown all
-
     - name: Boot Simulator
       shell: bash
       run: xcrun simctl boot "${{ matrix.simulator }}"
@@ -184,7 +180,7 @@ jobs:
       shell: bash
       run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" -C ${{ matrix.build_type }} -V
 
-    - name: Shutdown any simulators
+    - name: Shutdown simulator
       shell: bash
       run: xcrun simctl shutdown all
 
@@ -246,10 +242,6 @@ jobs:
         
     - uses: android-actions/setup-android@v3
 
-    - name: Shutdown any simulators
-      shell: bash
-      run: adb emu kill
-
     - name: Install Emulator
       run: sdkmanager "system-images;android-27;default;x86_64"
 
@@ -279,6 +271,6 @@ jobs:
       shell: bash
       run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build" -C ${{ matrix.build_type }} -V
 
-    - name: Shutdown any simulators
+    - name: Shutdown emulator
       shell: bash
       run: adb emu kill
