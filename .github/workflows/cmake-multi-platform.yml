@@ -194,7 +194,7 @@ jobs:
       matrix:
         include:
           - platform: Android
-          - profile: android_x86_64
+            profile: android_x86_64
             build_type: Release
 
     steps:
