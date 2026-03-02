@@ -251,6 +251,10 @@ jobs:
     - name: Boot Emulator 
       run: emulator -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
 
+    - name: Wait For Emulator
+      shell: bash
+      run: adb wait-for-device
+      
     - name: Install Integration Test Dependencies
       shell: bash
       run: conan install . -of IntegrationTests/Android/build/${{ matrix.platform }} -s build_type=${{ matrix.build_type }} --build=missing --profile:host="${{ github.workspace }}/profiles/host/${{ matrix.profile }}"
