@@ -248,6 +248,9 @@ jobs:
     - name: Create Android Emulator 
       run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
 
+    - name: Boot Emulator 
+      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
+
     - name: Install Integration Test Dependencies
       shell: bash
       run: conan install . -of IntegrationTests/Android/build/${{ matrix.platform }} -s build_type=${{ matrix.build_type }} --build=missing --profile:host="${{ github.workspace }}/profiles/host/${{ matrix.profile }}"
