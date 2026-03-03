@@ -185,7 +185,7 @@ jobs:
       run: xcrun simctl shutdown all
 
   android:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     strategy:
       # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
@@ -235,25 +235,14 @@ jobs:
 
     # Integration Tests ------------------------------------
 
-    - uses: actions/setup-java@v3
+    - uses: reactivecircus/android-emulator-runner@v2
       with:
-        java-version: '17'
-        distribution: 'temurin'
-        
-    - uses: android-actions/setup-android@v3
-
-    - name: Install Emulator
-      run: sdkmanager "system-images;android-27;google_apis;arm64-v8a"
-
-    - name: Create Android Emulator 
-      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;google_apis;arm64-v8a"
-
-    - name: Boot Emulator 
-      run: $ANDROID_SDK_ROOT/emulator/emulator -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
-
-    - name: Wait For Emulator
-      shell: bash
-      run: adb wait-for-device
+        api-level: 27
+        arch: x86_64
+        target: google_apis
+        emulator-options: -no-window -no-audio -no-boot-anim
+        script: |
+          adb devices
       
     - name: Install Integration Test Dependencies
       shell: bash
