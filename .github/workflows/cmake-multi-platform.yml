@@ -248,6 +248,16 @@ jobs:
     - name: Create Android Emulator 
       run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
 
+    - name: Emulator diagnostics
+      shell: bash
+      run: |
+        set -eux
+        which emulator || true
+        emulator -version || true
+        echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT"
+        ls -la "$ANDROID_SDK_ROOT/emulator" || true
+        ls -la "$ANDROID_SDK_ROOT/emulator/qemu" || true
+
     - name: Boot Emulator 
       run: emulator -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
 
