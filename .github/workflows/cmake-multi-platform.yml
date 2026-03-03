@@ -243,10 +243,10 @@ jobs:
     - uses: android-actions/setup-android@v3
 
     - name: Install Emulator
-      run: sdkmanager "system-images;android-27;default;x86_64"
+      run: sdkmanager "system-images;android-27;google_apis;arm64-v8a"
 
     - name: Create Android Emulator 
-      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
+      run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;google_apis;arm64-v8a"
 
     - name: Boot Emulator 
       run: $ANDROID_SDK_ROOT/emulator/emulator -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
