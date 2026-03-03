@@ -249,7 +249,7 @@ jobs:
       run: printf "no\n" | avdmanager create avd -n a27_x86_64 -k "system-images;android-27;default;x86_64"
 
     - name: Boot Emulator 
-      run: "$ANDROID_SDK_ROOT/emulator/emulator" -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
+      run: $ANDROID_SDK_ROOT/emulator/emulator -avd a27_x86_64 -no-window -no-audio -no-snapshot -no-boot-anim -gpu swiftshader_indirect -netdelay none -netspeed full & adb wait-for-device
 
     - name: Wait For Emulator
       shell: bash
