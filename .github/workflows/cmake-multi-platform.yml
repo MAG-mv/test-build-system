@@ -238,11 +238,15 @@ jobs:
     - uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: 27
+        target: default
         arch: x86_64
-        target: google_apis
-        emulator-options: -no-window -no-audio -no-boot-anim
+        # common stability options
+        emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+        disable-animations: true
         script: |
           adb devices
+          adb shell getprop sys.boot_completed
+          # run your integration tests here
       
     - name: Install Integration Test Dependencies
       shell: bash
