@@ -63,7 +63,7 @@ jobs:
 
     - name: Run Integration Tests
       shell: bash
-      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build" -C ${{ matrix.build_type }} -V
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build" -C ${{ matrix.build_type }} -V
 
   ios-visionos:
     runs-on: macos-latest
