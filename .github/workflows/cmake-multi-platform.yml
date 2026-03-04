@@ -99,7 +99,12 @@ jobs:
 
     - name: Install Integration Test Dependencies
       shell: bash
-      run: conan install . -of IntegrationTests/IOS_VisionOS/build/${{ matrix.platform }} -s build_type=${{ matrix.build_type }} --build=missing --profile:host="${{ github.workspace }}/profiles/host/${{ matrix.profile }}"
+      run: |
+        conan install . -of IntegrationTests/IOS_VisionOS/build/${{ matrix.platform }} 
+          -s build_type=${{ matrix.build_type }} 
+          -c tools.cmake.cmaketoolchain:generator=Ninja
+          --build=missing 
+          --profile:host="${{ github.workspace }}/profiles/host/${{ matrix.profile }}"
 
     - name: Configure CMake for Integration Tests
       shell: bash
