@@ -168,6 +168,7 @@ jobs:
         conan install . \
         -of "IntegrationTests/Android/build/${{ matrix.platform }}" \
         -s build_type=${{ matrix.build_type }} \
+        -s compiler.cppstd=17 \
         -c tools.cmake.cmaketoolchain:generator=Ninja \
         --build=missing \
         --profile:host="${{ github.workspace }}/profiles/host/${{ matrix.profile }}"
