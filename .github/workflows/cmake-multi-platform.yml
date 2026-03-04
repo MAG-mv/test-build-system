@@ -37,7 +37,6 @@ jobs:
       shell: bash
       run: |
         set -eux
-        cd "${{ github.workspace }}/IntegrationTests/Desktop/"
         conan install . \
         -of "IntegrationTests/Desktop/build/" \
         -s build_type=${{ matrix.build_type }} \
