@@ -107,7 +107,7 @@ jobs:
       run: |
         cmake -S "${{ github.workspace }}/IntegrationTests/IOS_VisionOS" \
           -B "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" \
-          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/build/${{ matrix.platform }}/build/${{ matrix.build_type }}/generators/conan_toolchain.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/build/build/${{ matrix.platform }}/${{ matrix.build_type }}/generators/conan_toolchain.cmake" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DCMAKE_FIND_DEBUG_MODE=ON \
           -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install/${{ matrix.platform }}"
@@ -156,7 +156,7 @@ jobs:
       run: |
         cmake -S "${{ github.workspace }}/IntegrationTests/Android" \
           -B "${{ github.workspace }}/IntegrationTests/Android/build" \
-          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/build/${{ matrix.platform }}/build/${{ matrix.build_type }}/generators/conan_toolchain.cmake" \
+          -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/build/build/${{ matrix.platform }}/${{ matrix.build_type }}/generators/conan_toolchain.cmake" \
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
           -DCMAKE_FIND_DEBUG_MODE=ON \
           -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install/${{ matrix.platform }}"
