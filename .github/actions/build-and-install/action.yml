@@ -7,7 +7,7 @@ inputs:
     required: true
   
   shared:
-    description: "Whether to build as a shared lib"
+    description: "Whether to build as a shared lib (True, False)"
     required: true
 
   output_folder:
