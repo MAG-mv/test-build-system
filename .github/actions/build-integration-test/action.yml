@@ -21,7 +21,7 @@ inputs:
     default: "build"
 
   install_prefix:
-    description: "Install prefix"
+    description: "Install prefix for the test-build-system"
     required: false
     default: "install"
 
@@ -62,11 +62,11 @@ runs:
         set -eux
         BUILD_TYPE_LOWER=$(echo "${{ inputs.build_type }}" | tr '[:upper:]' '[:lower:]')
         cd "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/"
-        cmake --preset "conan-$BUILD_TYPE_LOWER" -DCMAKE_PREFIX_PATH="${{ github.workspace }}/install"
+        cmake --preset "conan-$BUILD_TYPE_LOWER" -DCMAKE_PREFIX_PATH="${{ github.workspace }}/${{ inputs.install_prefix }}"
 
     - name: Build Integration Tests
       shell: bash
       run: |
         BUILD_TYPE_LOWER=$(echo "${{ inputs.build_type }}" | tr '[:upper:]' '[:lower:]')
-        cd "${{ github.workspace }}/IntegrationTests/"${{ inputs.integration_test_dir }}/"
+        cd "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/"
         cmake --build --preset conan-$BUILD_TYPE_LOWER
