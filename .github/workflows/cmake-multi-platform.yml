@@ -35,7 +35,7 @@ jobs:
 
     - uses: ./.github/actions/build-integration-test
       with:
-        platform: runner.os
+        platform: ${{ matrix.os }}
         integration_test_dir: Desktop
         build_type: ${{ matrix.build_type }}
 
