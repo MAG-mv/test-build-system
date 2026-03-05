@@ -5,6 +5,10 @@ inputs:
   build_type:
     description: "CMake build type (Release/Debug)"
     required: true
+  
+  shared:
+    description: "Whether to build as a shared lib"
+    required: true
 
   output_folder:
     description: "Conan output folder"
@@ -49,6 +53,7 @@ runs:
           -s compiler.cppstd=17 \
           -c tools.cmake.cmaketoolchain:generator=Ninja \
           --build=missing \
+          -o "*:shared=${{ inputs.shared }}" \
           $PROFILE_ARG
 
     - name: Configure CMake
