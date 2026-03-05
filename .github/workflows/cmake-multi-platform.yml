@@ -39,7 +39,7 @@ jobs:
         set -eux
         cd "${{ github.workspace }}/IntegrationTests/Desktop/"
         conan install . \
-        -of "build/runner.os" \
+        -of "build/runner.os/${{ matrix.build_type }}" \
         -s build_type=${{ matrix.build_type }} \
         -s compiler.cppstd=17 \
         -c tools.cmake.cmaketoolchain:generator=Ninja \
