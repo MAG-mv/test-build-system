@@ -19,6 +19,7 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         build_type: [Release]
+        shared: [true, false]
 
     steps:
     - uses: actions/checkout@v4
@@ -30,6 +31,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.build_type }}
 
     # Integration Tests ------------------------------------
 
