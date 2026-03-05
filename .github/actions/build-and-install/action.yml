@@ -38,8 +38,13 @@ runs:
       run: |
         set -eux
 
+        SHARED_STR="shared"
+        if [ "${{ inputs.shared }}" = "False" ]; then
+          SHARED_STR="static"
+        fi
+
         BUILD_TYPE="${{ inputs.build_type }}"
-        OUTPUT_FOLDER="${{ inputs.output_folder }}"
+        OUTPUT_FOLDER="build/${{ inputs.platform }}/${BUILD_TYPE}/${SHARED_STR}"
         PROFILE="${{ inputs.conan_profile_host }}"
 
         PROFILE_ARG=""
