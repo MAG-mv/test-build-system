@@ -5,9 +5,11 @@ inputs:
 
   platform:
     description: "The target platform (Windows/iOS)"
+    required: true
 
   integration_test_dir:
     description: "The integration test folder (Desktop/IOS_VisionOS/Android)"
+    required: true
 
   build_type:
     description: "CMake build type (Release/Debug)"
