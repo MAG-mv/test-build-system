@@ -19,7 +19,7 @@ jobs:
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
         build_type: [Release]
-        shared: [true, false]
+        shared: ["True", "False"]
 
     steps:
     - uses: actions/checkout@v4
@@ -59,11 +59,13 @@ jobs:
             sdk: iphonesimulator
             profile: ios_sim_arm
             build_type: Release
+            shared: "False"
           - platform: visionOS
             simulator: Apple Vision Pro
             sdk: xrsimulator
             profile: visionos_sim_arm
             build_type: Release
+            shared: "False"
 
     steps:
     - uses: actions/checkout@v4
@@ -78,6 +80,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
     # Integration Tests ------------------------------------
@@ -117,6 +120,7 @@ jobs:
           - platform: Android
             profile: android_x86_64
             build_type: Release
+            shared: "False"
 
     steps:
     - uses: actions/checkout@v4
@@ -124,6 +128,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
     # Integration Tests ------------------------------------
