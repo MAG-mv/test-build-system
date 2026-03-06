@@ -1,0 +1,259 @@
+# This starter workflow is for a CMake project running on multiple platforms. There is a different starter workflow if you just want a single platform.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-single-platform.yml
+name: Build and test all supported platforms
+
+# Our event to trigger this workflow
+on:
+  pull_request:
+    branches: [ "master" ]
+
+# Build all supported platforms
+jobs:
+  desktop-build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        build_type: [RelWithDebInfo]
+        shared: ["True", "False"]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up MSVC (Windows only)
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - uses: ./.github/actions/build-and-install
+      with:
+        build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
+
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/install
+        if-no-files-found: error
+
+  ios-visionos-build:
+    runs-on: macos-latest
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        platform: [iOS, visionOS]
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: iOS
+            profile: ios_sim_arm
+          - platform: visionOS
+            profile: visionos_sim_arm
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Initialize Xcode
+      shell: bash
+      run: |
+        set -eux
+        xcodebuild -version
+        sudo xcodebuild -runFirstLaunch
+
+    - uses: ./.github/actions/build-and-install
+      with:
+        build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/install
+        if-no-files-found: error
+
+  android-build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: Android
+            profile: android_x86_64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: ./.github/actions/build-and-install
+      with:
+        build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/install
+        if-no-files-found: error
+
+
+# Integration Tests --------------------------------------------------------------------------------------
+
+  desktop-integration-tests:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        build_type: [RelWithDebInfo]
+        shared: ["True", "False"]
+
+    needs: desktop-build
+    steps:
+
+    - uses: actions/checkout@v4
+    
+    - uses: actions/download-artifact@v5
+      with:
+        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/artifacts
+
+    - name: Set up MSVC (Windows only)
+      if: runner.os == 'Windows'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.os }}
+        integration_test_dir: Desktop
+        build_type: ${{ matrix.build_type }}
+        install_prefix: artifacts
+
+    - name: Run Integration Tests
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.shared }}" = "True" ]; then
+          export PATH="${{ github.workspace }}/artifacts/bin;$PATH"
+        fi
+
+        ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+
+  ios-visionos-intgration-tests:
+    runs-on: macos-latest
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        platform: [iOS, visionOS]
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: iOS
+            simulator: iPhone 17
+            sdk: iphonesimulator
+            profile: ios_sim_arm
+          - platform: visionOS
+            simulator: Apple Vision Pro
+            sdk: xrsimulator
+            profile: visionos_sim_arm
+
+    needs: ios-visionos-build
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v5
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/artifacts
+
+    - name: Initialize Xcode
+      shell: bash
+      run: |
+        set -eux
+        xcodebuild -version
+        sudo xcodebuild -runFirstLaunch
+
+    - name: Boot Simulator
+      shell: bash
+      run: xcrun simctl boot "${{ matrix.simulator }}"
+
+    - name: Wait for Simulator
+      shell: bash
+      run: xcrun simctl bootstatus booted
+
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.platform }}
+        integration_test_dir: IOS_VisionOS
+        build_type: ${{ matrix.build_type }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+        install_prefix: artifacts
+
+    - name: Run Integration Tests
+      shell: bash
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+
+    - name: Shutdown simulator
+      shell: bash
+      run: xcrun simctl shutdown all
+
+  android-integration-tests:
+    runs-on: ubuntu-latest
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: Android
+            profile: android_x86_64
+
+    needs: android-build
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v5
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/artifacts
+
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.platform }}
+        integration_test_dir: Android
+        build_type: ${{ matrix.build_type }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+        install_prefix: artifacts
+
+    - uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 27
+        target: default
+        arch: x86_64
+        # common stability options
+        emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+        disable-animations: true
+        script: |
+          adb shell getprop sys.boot_completed
+          ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+    

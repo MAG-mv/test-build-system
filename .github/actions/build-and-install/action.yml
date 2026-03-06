@@ -1,0 +1,75 @@
+name: "Build and Install"
+description: "Install dependencies with Conan, configure CMake, build, and install"
+
+inputs:
+  build_type:
+    description: "CMake build type (Release/Debug)"
+    required: true
+  
+  shared:
+    description: "Whether to build as a shared lib (True, False)"
+    required: true
+
+  output_folder:
+    description: "Conan output folder"
+    required: false
+    default: "build"
+
+  install_prefix:
+    description: "Install prefix"
+    required: false
+    default: "install"
+
+  conan_profile_host:
+    description: "Optional Conan host profile"
+    required: false
+    default: ""
+
+runs:
+  using: "composite"
+
+  steps:
+
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+
+    - name: Conan install
+      shell: bash
+      run: |
+        set -eux
+
+        PROFILE="${{ inputs.conan_profile_host }}"
+
+        PROFILE_ARG=""
+        if [ -n "$PROFILE" ]; then
+          PROFILE_ARG="--profile:host=$PROFILE"
+        fi
+
+        conan install . \
+          -of "${{ inputs.output_folder }}" \
+          -s build_type="${{ inputs.build_type }}" \
+          -s compiler.cppstd=17 \
+          -c tools.cmake.cmaketoolchain:generator=Ninja \
+          --build=missing \
+          -o "*:shared=${{ inputs.shared }}" \
+          $PROFILE_ARG
+
+    - name: Configure CMake
+      shell: bash
+      run: |
+        BUILD_TYPE_LOWER=$(echo "${{ inputs.build_type }}" | tr '[:upper:]' '[:lower:]')
+        cmake --preset conan-$BUILD_TYPE_LOWER
+
+    - name: Build
+      shell: bash
+      run: |
+        BUILD_TYPE_LOWER=$(echo "${{ inputs.build_type }}" | tr '[:upper:]' '[:lower:]')
+        cmake --build --preset conan-$BUILD_TYPE_LOWER
+
+    - name: Install
+      shell: bash
+      run: |
+        cmake --install \
+          "${{ github.workspace }}/${{ inputs.output_folder }}/build/${{ inputs.build_type }}" \
+          --config ${{ inputs.build_type }} \
+          --prefix "${{ github.workspace }}/${{ inputs.install_prefix }}"
