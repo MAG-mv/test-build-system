@@ -38,13 +38,6 @@ runs:
       run: |
         set -eux
 
-        SHARED_STR="shared"
-        if [ "${{ inputs.shared }}" = "False" ]; then
-          SHARED_STR="static"
-        fi
-
-        BUILD_TYPE="${{ inputs.build_type }}"
-        OUTPUT_FOLDER="${{ inputs.output_folder }}"
         PROFILE="${{ inputs.conan_profile_host }}"
 
         PROFILE_ARG=""
@@ -53,12 +46,12 @@ runs:
         fi
 
         conan install . \
-          -of "$OUTPUT_FOLDER" \
-          -s build_type="$BUILD_TYPE" \
+          -of "${{ inputs.output_folder }}" \
+          -s build_type="${{ inputs.build_type }}" \
           -s compiler.cppstd=17 \
           -c tools.cmake.cmaketoolchain:generator=Ninja \
           --build=missing \
-          -o "*:shared=$SHARED_STR" \
+          -o "*:shared=${{ inputs.shared }}" \
           $PROFILE_ARG
 
     - name: Configure CMake
