@@ -48,7 +48,7 @@ jobs:
           export PATH="${{ github.workspace }}/install/:$PATH"
         fi
 
-        run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+        ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
 
   ios-visionos:
     runs-on: macos-latest
