@@ -18,7 +18,7 @@ jobs:
       
       matrix:
         os: [windows-latest, macos-latest, ubuntu-latest]
-        build_type: [Release]
+        build_type: [RelWithDebInfo]
         shared: ["True", "False"]
 
     steps:
@@ -50,7 +50,7 @@ jobs:
       matrix:
         platform: [iOS, visionOS]
         shared: ["True", "False"]
-        build_type: [Release]
+        build_type: [RelWithDebInfo]
         include:
           - platform: iOS
             simulator: iPhone 17
@@ -111,10 +111,10 @@ jobs:
       
       matrix:
         shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
         include:
           - platform: Android
             profile: android_x86_64
-            build_type: Release
 
     steps:
     - uses: actions/checkout@v4
