@@ -80,6 +80,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
     # Integration Tests ------------------------------------
@@ -127,6 +128,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
     # Integration Tests ------------------------------------
