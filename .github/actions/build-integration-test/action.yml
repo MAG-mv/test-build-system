@@ -67,11 +67,13 @@ runs:
     - name: Build Integration Tests
       shell: bash
       run: |
+        set -eux
+
         BUILD_TYPE_LOWER=$(echo "${{ inputs.build_type }}" | tr '[:upper:]' '[:lower:]')
         cd "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/"
-        cmake --build --preset conan-$BUILD_TYPE_LOWER
+        cmake --build --preset "conan-$BUILD_TYPE_LOWER"
 
-        OUTPUT=$(ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" -V)
+        OUTPUT=$(ctest --test-dir "${BUILD_DIR}" -C "${BUILD_TYPE}" -V 2>&1)
         echo "$OUTPUT"
 
         if echo "$OUTPUT" | grep -q "No tests were found!!!"; then
