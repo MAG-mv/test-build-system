@@ -58,7 +58,7 @@ runs:
           -s compiler.cppstd=17 \
           -c tools.cmake.cmaketoolchain:generator=Ninja \
           --build=missing \
-          -o "*:shared=${{ inputs.shared }}" \
+          -o "*:shared=$SHARED_STR" \
           $PROFILE_ARG
 
     - name: Configure CMake
