@@ -228,6 +228,7 @@ jobs:
           - platform: Android
             profile: android_x86_64
 
+    needs: android-build
     steps:
     - uses: actions/checkout@v4
 
