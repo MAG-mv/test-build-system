@@ -48,7 +48,7 @@ runs:
 
         cd "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/"
         conan install . \
-        -of "build/${{ inputs.platform }}/${{ inputs.build_type }}" \
+        -of "build" \
         -s build_type=${{ inputs.build_type }} \
         -s compiler.cppstd=17 \
         -c tools.cmake.cmaketoolchain:generator=Ninja \
@@ -78,12 +78,12 @@ runs:
       run: |
         set -eux
 
-        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}" -N 2>&1)
+        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/build" -N 2>&1)
         echo "$OUTPUT"
 
         TEST_COUNT=$(echo "$OUTPUT" | awk -F': ' '/Total Tests:/ {print $2}')
 
         if [ -z "$TEST_COUNT" ] || [ "$TEST_COUNT" -eq 0 ]; then
-          echo "Integration tests not found. Are you in the right directory?"
+          echo "No integration tests found"
           exit 1
         fi
