@@ -170,15 +170,15 @@ jobs:
       if: runner.os == 'Windows'
       uses: ilammy/msvc-dev-cmd@v1
 
+    - name: Debug workspace
+      run: dir ${{ github.workspace }} /s
+      shell: cmd
+
     - uses: ./.github/actions/build-integration-test
       with:
         platform: ${{ matrix.os }}
         integration_test_dir: Desktop
         build_type: ${{ matrix.build_type }}
-
-    - name: Debug workspace
-      run: dir ${{ github.workspace }} /s
-      shell: cmd
 
     - name: Run Integration Tests
       shell: bash
