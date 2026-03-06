@@ -43,7 +43,7 @@ jobs:
 
     - name: Run Integration Tests
       shell: bash
-      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/" -C ${{ matrix.build_type }} -V
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}.." -C ${{ matrix.build_type }} -V
 
   ios-visionos:
     runs-on: macos-latest
@@ -102,7 +102,7 @@ jobs:
 
     - name: Run Integration Tests
       shell: bash
-      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build" -C ${{ matrix.build_type }} -V
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
 
     - name: Shutdown simulator
       shell: bash
@@ -149,4 +149,4 @@ jobs:
         disable-animations: true
         script: |
           adb shell getprop sys.boot_completed
-          ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build" -C ${{ matrix.build_type }} -V
+          ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
