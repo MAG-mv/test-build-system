@@ -40,7 +40,7 @@ jobs:
         path: ${{ github.workspace }}/install
         if-no-files-found: error
 
-  ios-visionos:
+  ios-visionos-build:
     runs-on: macos-latest
 
     strategy:
@@ -53,12 +53,8 @@ jobs:
         build_type: [RelWithDebInfo]
         include:
           - platform: iOS
-            simulator: iPhone 17
-            sdk: iphonesimulator
             profile: ios_sim_arm
           - platform: visionOS
-            simulator: Apple Vision Pro
-            sdk: xrsimulator
             profile: visionos_sim_arm
 
     steps:
@@ -77,32 +73,14 @@ jobs:
         shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
-    # Integration Tests ------------------------------------
-
-    - name: Boot Simulator
-      shell: bash
-      run: xcrun simctl boot "${{ matrix.simulator }}"
-
-    - name: Wait for Simulator
-      shell: bash
-      run: xcrun simctl bootstatus booted
-
-    - uses: ./.github/actions/build-integration-test
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
       with:
-        platform: ${{ matrix.platform }}
-        integration_test_dir: IOS_VisionOS
-        build_type: ${{ matrix.build_type }}
-        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/install
+        if-no-files-found: error
 
-    - name: Run Integration Tests
-      shell: bash
-      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
-
-    - name: Shutdown simulator
-      shell: bash
-      run: xcrun simctl shutdown all
-
-  android:
+  android-build:
     runs-on: ubuntu-latest
 
     strategy:
@@ -145,6 +123,10 @@ jobs:
           adb shell getprop sys.boot_completed
           ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
 
+
+
+# Integration Tests --------------------------------------------------------------------------------------
+
   desktop-integration-tests:
     runs-on: ${{ matrix.os }}
     strategy:
@@ -185,3 +167,65 @@ jobs:
         fi
 
         ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+
+  ios-visionos-intgration-tests:
+    runs-on: macos-latest
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        platform: [iOS, visionOS]
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: iOS
+            simulator: iPhone 17
+            sdk: iphonesimulator
+            profile: ios_sim_arm
+          - platform: visionOS
+            simulator: Apple Vision Pro
+            sdk: xrsimulator
+            profile: visionos_sim_arm
+
+    needs: ios-visionos-build
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v5
+      with:
+        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/artifacts
+
+    - name: Initialize Xcode
+      shell: bash
+      run: |
+        set -eux
+        xcodebuild -version
+        sudo xcodebuild -runFirstLaunch
+
+    - name: Boot Simulator
+      shell: bash
+      run: xcrun simctl boot "${{ matrix.simulator }}"
+
+    - name: Wait for Simulator
+      shell: bash
+      run: xcrun simctl bootstatus booted
+
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.platform }}
+        integration_test_dir: IOS_VisionOS
+        build_type: ${{ matrix.build_type }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+
+    - name: Run Integration Tests
+      shell: bash
+      run: ctest --test-dir "${{ github.workspace }}/IntegrationTests/IOS_VisionOS/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+
+    - name: Shutdown simulator
+      shell: bash
+      run: xcrun simctl shutdown all
+
+
+    
