@@ -44,7 +44,7 @@ runs:
         fi
 
         BUILD_TYPE="${{ inputs.build_type }}"
-        OUTPUT_FOLDER="build/${{ inputs.platform }}/${BUILD_TYPE}/${SHARED_STR}"
+        OUTPUT_FOLDER="${{ inputs.output_folder }}"
         PROFILE="${{ inputs.conan_profile_host }}"
 
         PROFILE_ARG=""
