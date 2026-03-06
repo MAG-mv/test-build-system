@@ -34,6 +34,9 @@ runs:
   using: "composite"
 
   steps:
+    - name: Install Conan
+      uses: conan-io/setup-conan@v1
+      
     - name: Conan install
       shell: bash
       run: |
