@@ -14,10 +14,7 @@ class TestLib(ConanFile):
         cmake_layout(self)
 
     def requirements(self):
-        pass
-
-    def build_requirements(self):
-        self.test_requires("gtest/1.17.0")
+        self.requires("gtest/1.17.0")
 
     def generate(self):
         tc = CMakeToolchain(self)
