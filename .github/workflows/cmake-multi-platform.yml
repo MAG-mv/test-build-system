@@ -103,26 +103,12 @@ jobs:
         shared: ${{ matrix.shared }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
 
-    # Integration Tests ------------------------------------
-    - uses: ./.github/actions/build-integration-test
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
       with:
-        platform: ${{ matrix.platform }}
-        integration_test_dir: Android
-        build_type: ${{ matrix.build_type }}
-        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
-
-    - uses: reactivecircus/android-emulator-runner@v2
-      with:
-        api-level: 27
-        target: default
-        arch: x86_64
-        # common stability options
-        emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
-        disable-animations: true
-        script: |
-          adb shell getprop sys.boot_completed
-          ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
-
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/install
+        if-no-files-found: error
 
 
 # Integration Tests --------------------------------------------------------------------------------------
@@ -228,5 +214,44 @@ jobs:
       shell: bash
       run: xcrun simctl shutdown all
 
+  android-integration-tests:
+    runs-on: ubuntu-latest
 
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        shared: ["True", "False"]
+        build_type: [RelWithDebInfo]
+        include:
+          - platform: Android
+            profile: android_x86_64
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/download-artifact@v5
+      with:
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}/artifacts
+
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.platform }}
+        integration_test_dir: Android
+        build_type: ${{ matrix.build_type }}
+        conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+
+    - uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: 27
+        target: default
+        arch: x86_64
+        # common stability options
+        emulator-options: -no-window -no-audio -no-boot-anim -gpu swiftshader_indirect
+        disable-animations: true
+        script: |
+          adb shell getprop sys.boot_completed
+          ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
     
