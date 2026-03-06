@@ -31,7 +31,7 @@ jobs:
     - uses: ./.github/actions/build-and-install
       with:
         build_type: ${{ matrix.build_type }}
-        shared: ${{ matrix.build_type }}
+        shared: ${{ matrix.shared }}
 
     # Integration Tests ------------------------------------
 
