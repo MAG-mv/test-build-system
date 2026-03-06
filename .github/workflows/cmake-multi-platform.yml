@@ -5,7 +5,7 @@ name: Build and test all supported platforms
 # Our event to trigger this workflow
 on:
   pull_request:
-    branches: [ "master", "ga-test" ]
+    branches: [ "master" ]
 
 # Build all supported platforms
 jobs:
