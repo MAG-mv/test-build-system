@@ -218,6 +218,7 @@ jobs:
         integration_test_dir: IOS_VisionOS
         build_type: ${{ matrix.build_type }}
         conan_profile_host: ${{ github.workspace }}/profiles/host/${{ matrix.profile }}
+        install_prefix: artifacts
 
     - name: Run Integration Tests
       shell: bash
