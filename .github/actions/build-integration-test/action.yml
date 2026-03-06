@@ -78,7 +78,7 @@ runs:
       run: |
         set -eux
 
-        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/build" -N 2>&1)
+        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}/build/build/=${{ inputs.build_type }}" -N 2>&1)
         echo "$OUTPUT"
 
         TEST_COUNT=$(echo "$OUTPUT" | awk -F': ' '/Total Tests:/ {print $2}')
