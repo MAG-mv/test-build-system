@@ -58,18 +58,18 @@ jobs:
       fail-fast: false
       
       matrix:
+        platform: [iOS, visionOS]
         shared: ["True", "False"]
+        build_type: [Release]
         include:
           - platform: iOS
             simulator: iPhone 17
             sdk: iphonesimulator
             profile: ios_sim_arm
-            build_type: Release
           - platform: visionOS
             simulator: Apple Vision Pro
             sdk: xrsimulator
             profile: visionos_sim_arm
-            build_type: Release
 
     steps:
     - uses: actions/checkout@v4
