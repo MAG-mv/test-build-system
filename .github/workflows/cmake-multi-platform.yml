@@ -9,7 +9,7 @@ on:
 
 # Build all supported platforms
 jobs:
-  desktop:
+  desktop-build:
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -33,22 +33,13 @@ jobs:
         build_type: ${{ matrix.build_type }}
         shared: ${{ matrix.shared }}
 
-    # Integration Tests ------------------------------------
-
-    - uses: ./.github/actions/build-integration-test
+    - name: Upload install tree
+      uses: actions/upload-artifact@v4
       with:
-        platform: ${{ matrix.os }}
-        integration_test_dir: Desktop
-        build_type: ${{ matrix.build_type }}
-
-    - name: Run Integration Tests
-      shell: bash
-      run: |
-        if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.shared }}" = "True" ]; then
-          export PATH="${{ github.workspace }}/install/bin;$PATH"
-        fi
-
-        ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+        name: desktop-${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: |
+          ${{ github.workspace }}/install
+          if-no-files-found: error
 
   ios-visionos:
     runs-on: macos-latest
@@ -154,3 +145,39 @@ jobs:
         script: |
           adb shell getprop sys.boot_completed
           ctest --test-dir "${{ github.workspace }}/IntegrationTests/Android/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
+
+  desktop-integration-tests:
+
+     runs-on: ${{ matrix.os }}
+
+    strategy:
+      # Set fail-fast to false to ensure that feedback is delivered for all matrix combinations. Consider changing this to true when your workflow is stable.
+      fail-fast: false
+      
+      matrix:
+        os: [windows-latest, macos-latest, ubuntu-latest]
+        build_type: [Release]
+        shared: ["True", "False"]
+
+    needs: desktop-build
+    steps:
+
+    - uses: actions/download-artifact@v5
+      with:
+        name: desktop-${{ matrix.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        path: ${{ github.workspace }}
+          
+    - uses: ./.github/actions/build-integration-test
+      with:
+        platform: ${{ matrix.os }}
+        integration_test_dir: Desktop
+        build_type: ${{ matrix.build_type }}
+
+    - name: Run Integration Tests
+      shell: bash
+      run: |
+        if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.shared }}" = "True" ]; then
+          export PATH="${{ github.workspace }}/install/bin;$PATH"
+        fi
+
+        ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
