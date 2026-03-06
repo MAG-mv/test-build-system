@@ -163,7 +163,7 @@ jobs:
     
     - uses: actions/download-artifact@v5
       with:
-        name: desktop-${{ matrix.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
         path: ${{ github.workspace }}/artifacts
 
     - name: Set up MSVC (Windows only)
