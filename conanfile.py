@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain, CMake, cmake_layout
+from conan.tools.cmake import CMakeDeps, CMakeToolchain, CMake, cmake_layout
 
 class TestLib(ConanFile):
     name = "test-lib"
@@ -17,6 +17,9 @@ class TestLib(ConanFile):
         self.requires("gtest/1.17.0")
 
     def generate(self):
+        deps = CMakeDeps(self)
+        deps.generate()
+
         tc = CMakeToolchain(self)
         tc.cache_variables["BUILD_SHARED_LIBS"] = self.options.shared
         tc.generate()
