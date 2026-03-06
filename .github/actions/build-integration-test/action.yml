@@ -81,7 +81,9 @@ runs:
         OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}" -N 2>&1)
         echo "$OUTPUT"
 
-        if echo "$OUTPUT" | grep -q "No tests were found"; then
+        TEST_COUNT=$(echo "$OUTPUT" | awk -F': ' '/Total Tests:/ {print $2}')
+
+        if [ -z "$TEST_COUNT" ] || [ "$TEST_COUNT" -eq 0 ]; then
           echo "Integration tests not found. Are you in the right directory?"
           exit 1
         fi
