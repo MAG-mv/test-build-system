@@ -78,7 +78,7 @@ runs:
       run: |
         set -eux
 
-        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}}" -N 2>&1)
+        OUTPUT=$(ctest --test-dir "${{ github.workspace }}/IntegrationTests/${{ inputs.integration_test_dir }}" -N 2>&1)
         echo "$OUTPUT"
 
         if echo "$OUTPUT" | grep -q "No tests were found"; then
