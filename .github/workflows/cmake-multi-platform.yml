@@ -45,7 +45,7 @@ jobs:
       shell: bash
       run: |
         if [ "${{ runner.os }}" = "Windows" ] && [ "${{ matrix.shared }}" = "True" ]; then
-          export PATH="${{ github.workspace }}/install/:$PATH"
+          export PATH="${{ github.workspace }}/install/bin;$PATH"
         fi
 
         ctest --test-dir "${{ github.workspace }}/IntegrationTests/Desktop/build/build/${{ matrix.build_type }}" -C ${{ matrix.build_type }} -V
