@@ -194,7 +194,7 @@ jobs:
 
     - uses: actions/download-artifact@v5
       with:
-        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        name: ${{ matrix.platform }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
         path: ${{ github.workspace }}/artifacts
 
     - name: Initialize Xcode
