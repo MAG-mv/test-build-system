@@ -36,7 +36,7 @@ jobs:
     - name: Upload install tree
       uses: actions/upload-artifact@v4
       with:
-        name: desktop-${{ matrix.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        name: ${{ matrix.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
         path: ${{ github.workspace }}/install
         if-no-files-found: error
 
@@ -163,7 +163,7 @@ jobs:
     
     - uses: actions/download-artifact@v5
       with:
-        name: desktop-${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
+        name: ${{ runner.os }}-${{ matrix.build_type }}-shared-${{ matrix.shared }}
         path: ${{ github.workspace }}
 
     - uses: ./.github/actions/build-integration-test
